@@ -5,7 +5,10 @@
   const formatDate = (value) => new Date(`${value}Z`).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
   const request = async (url, options = {}) => {
     const response = await fetch(url, { ...options, headers: { 'Content-Type': 'application/json', ...(state.csrf ? { 'X-CSRF-Token': state.csrf } : {}), ...(options.headers || {}) } });
-    const data = await response.json();
+    let data;
+    try { data = await response.json(); } catch {
+      throw new Error('Admin API unavailable. GitHub Pages only serves static files; deploy the Node.js server to use admin features.');
+    }
     if (!response.ok) throw new Error(data.error || 'Request failed');
     return data;
   };
@@ -37,7 +40,7 @@
   }
   $('#login-form').addEventListener('submit', async (event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const button = event.currentTarget.querySelector('button'); button.disabled = true; button.textContent = 'Checking'; try { await request('/api/admin/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(form)) }); state.csrf = document.cookie.split('; ').find((item) => item.startsWith('admin_csrf='))?.split('=')[1] || ''; await load(); } catch (error) { showLogin(error.message); } finally { button.disabled = false; button.textContent = 'Sign in'; } });
   $('#logout').addEventListener('click', async () => { await request('/api/admin/logout', { method: 'POST' }); showLogin(); });
-  load().catch(() => showLogin());
+  load().catch((error) => showLogin(error.message));
   const stream = new EventSource('/api/admin/stream');
   stream.onopen = () => { state.realtime = true; if (state.data) render(); $('#connection').innerHTML = '<i></i> Connected'; };
   stream.onmessage = () => load({ preserveDrafts: true }).catch(() => {});
