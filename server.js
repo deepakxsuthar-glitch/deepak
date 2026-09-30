@@ -232,6 +232,9 @@ async function route(request, response) {
     return json(response, 404, { error: 'Admin endpoint not found' });
   }
   if (request.method === 'GET' && pathname === '/admin') {
+    response.writeHead(301, { Location: '/admin/' }); return response.end();
+  }
+  if (request.method === 'GET' && pathname === '/admin/') {
     const html = fs.readFileSync(path.join(ROOT, 'admin', 'index.html')); response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return response.end(html);
   }
   if (request.method === 'GET' && publicFile(request, response, pathname)) return;
