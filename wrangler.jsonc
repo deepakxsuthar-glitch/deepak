@@ -1,0 +1,18 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "deepak-portfolio-api",
+	"main": "worker.js",
+	"compatibility_date": "2026-09-30",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "deepak-portfolio-db",
+			"database_id": "65b025fe-8233-4223-b971-48aa3f0adcee",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		"FRONTEND_ORIGIN": "https://deepakxsuthar-glitch.github.io",
+		"ADMIN_EMAIL": "deepakxsuthar@gmail.com"
+	}
+}

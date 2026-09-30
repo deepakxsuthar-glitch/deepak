@@ -1,5 +1,6 @@
 # Local dependencies and runtime data
 node_modules/
+.wrangler/
 data/*.sqlite
 data/*.sqlite-*
 .env
