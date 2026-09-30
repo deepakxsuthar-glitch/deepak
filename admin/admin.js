@@ -1,13 +1,15 @@
 (() => {
   const state = { csrf: '', data: null, realtime: false };
+  const API_BASE = (window.DEEPAK_API_BASE || '').replace(/\/+$/, '');
+  const apiUrl = (url) => `${API_BASE}${url}`;
   const $ = (selector) => document.querySelector(selector);
   const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
   const formatDate = (value) => new Date(`${value}Z`).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
   const request = async (url, options = {}) => {
-    const response = await fetch(url, { ...options, headers: { 'Content-Type': 'application/json', ...(state.csrf ? { 'X-CSRF-Token': state.csrf } : {}), ...(options.headers || {}) } });
+    const response = await fetch(apiUrl(url), { ...options, credentials: 'include', headers: { 'Content-Type': 'application/json', ...(state.csrf ? { 'X-CSRF-Token': state.csrf } : {}), ...(options.headers || {}) } });
     let data;
     try { data = await response.json(); } catch {
-      throw new Error('Admin API unavailable. GitHub Pages only serves static files; deploy the Node.js server to use admin features.');
+      throw new Error('Admin API unavailable. Check that the backend is deployed and its URL is set in js/api-config.js.');
     }
     if (!response.ok) throw new Error(data.error || 'Request failed');
     return data;
@@ -31,17 +33,17 @@
   }
   async function load({ preserveDrafts = false } = {}) {
     const drafts = preserveDrafts ? [...document.querySelectorAll('.content-item')].map((row) => ({ section: row.dataset.section, title: row.querySelector('.content-title').value, body: row.querySelector('.content-body').value, enabled: row.querySelector('.content-enabled').checked, published: row.querySelector('.content-published').checked })) : [];
-    state.data = await request('/api/admin/bootstrap'); state.data.health = await request('/api/health'); state.csrf = document.cookie.split('; ').find((item) => item.startsWith('admin_csrf='))?.split('=')[1] || state.csrf; render();
+    state.data = await request('/api/admin/bootstrap'); state.data.health = await request('/api/health'); state.csrf = state.data.session.csrfToken; render();
     drafts.forEach((draft) => {
       const row = [...document.querySelectorAll('.content-item')].find((item) => item.dataset.section === draft.section);
       if (!row) return;
       row.querySelector('.content-title').value = draft.title; row.querySelector('.content-body').value = draft.body; row.querySelector('.content-enabled').checked = draft.enabled; row.querySelector('.content-published').checked = draft.published;
     });
   }
-  $('#login-form').addEventListener('submit', async (event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const button = event.currentTarget.querySelector('button'); button.disabled = true; button.textContent = 'Checking'; try { await request('/api/admin/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(form)) }); state.csrf = document.cookie.split('; ').find((item) => item.startsWith('admin_csrf='))?.split('=')[1] || ''; await load(); } catch (error) { showLogin(error.message); } finally { button.disabled = false; button.textContent = 'Sign in'; } });
+  $('#login-form').addEventListener('submit', async (event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const button = event.currentTarget.querySelector('button'); button.disabled = true; button.textContent = 'Checking'; try { const result = await request('/api/admin/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(form)) }); state.csrf = result.csrfToken; await load(); } catch (error) { showLogin(error.message); } finally { button.disabled = false; button.textContent = 'Sign in'; } });
   $('#logout').addEventListener('click', async () => { await request('/api/admin/logout', { method: 'POST' }); showLogin(); });
   load().catch((error) => showLogin(error.message));
-  const stream = new EventSource('/api/admin/stream');
+  const stream = new EventSource(apiUrl('/api/admin/stream'), { withCredentials: true });
   stream.onopen = () => { state.realtime = true; if (state.data) render(); $('#connection').innerHTML = '<i></i> Connected'; };
   stream.onmessage = () => load({ preserveDrafts: true }).catch(() => {});
   stream.onerror = () => { state.realtime = false; $('#connection').innerHTML = '<i style="background:var(--orange)"></i> Reconnecting'; if (state.data) render(); };

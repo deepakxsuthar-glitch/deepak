@@ -5,10 +5,14 @@ const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 
 const ROOT = __dirname;
+const ENV_PATH = path.join(ROOT, '.env');
+if (fs.existsSync(ENV_PATH)) process.loadEnvFile(ENV_PATH);
 const PORT = Number(process.env.PORT || 3000);
 const DB_PATH = process.env.DB_PATH || path.join(ROOT, 'data', 'deepak.sqlite');
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@localhost';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '';
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'https://deepakxsuthar-glitch.github.io';
+const COOKIE_ATTRIBUTES = process.env.NODE_ENV === 'production' ? 'SameSite=None; Secure' : 'SameSite=Strict';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 8;
 const sessions = new Map();
 const subscribers = new Set();
@@ -153,6 +157,21 @@ function publicFile(request, response, pathname) {
   return true;
 }
 async function route(request, response) {
+  const origin = request.headers.origin;
+  if (origin === FRONTEND_ORIGIN) {
+    response.setHeader('Access-Control-Allow-Origin', origin);
+    response.setHeader('Access-Control-Allow-Credentials', 'true');
+    response.setHeader('Vary', 'Origin');
+  }
+  if (request.method === 'OPTIONS') {
+    if (origin !== FRONTEND_ORIGIN) return json(response, 403, { error: 'Origin not allowed' });
+    response.writeHead(204, {
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-CSRF-Token',
+      'Access-Control-Max-Age': '600'
+    });
+    return response.end();
+  }
   const url = new URL(request.url, `http://${request.headers.host}`);
   const { pathname } = url;
   if (request.method === 'GET' && pathname === '/api/health') {
@@ -192,20 +211,20 @@ async function route(request, response) {
     const csrfToken = crypto.randomBytes(24).toString('hex');
     sessions.set(sessionToken, { email: ADMIN_EMAIL, csrfToken, expires: Date.now() + SESSION_TTL_MS });
     event('Admin logged in', ADMIN_EMAIL, 'admin');
-    return json(response, 200, { ok: true }, { 'Set-Cookie': [`admin_session=${sessionToken}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`, `admin_csrf=${csrfToken}; SameSite=Strict; Path=/; Max-Age=28800`] });
+    return json(response, 200, { ok: true, csrfToken }, { 'Set-Cookie': [`admin_session=${sessionToken}; HttpOnly; ${COOKIE_ATTRIBUTES}; Path=/; Max-Age=28800`, `admin_csrf=${csrfToken}; ${COOKIE_ATTRIBUTES}; Path=/; Max-Age=28800`] });
   }
   if (request.method === 'POST' && pathname === '/api/admin/logout') {
     const session = auth(request, response); if (!session) return;
     if (!csrf(request, response)) return;
     const token = parseCookies(request).admin_session; sessions.delete(token); event('Admin logged out', session.email, 'admin');
-    return json(response, 200, { ok: true }, { 'Set-Cookie': ['admin_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0', 'admin_csrf=; SameSite=Strict; Path=/; Max-Age=0'] });
+    return json(response, 200, { ok: true }, { 'Set-Cookie': [`admin_session=; HttpOnly; ${COOKIE_ATTRIBUTES}; Path=/; Max-Age=0`, `admin_csrf=; ${COOKIE_ATTRIBUTES}; Path=/; Max-Age=0`] });
   }
   if (pathname.startsWith('/api/admin/')) {
     const session = auth(request, response); if (!session) return;
     if (request.method !== 'GET' && !csrf(request, response)) return;
     if (request.method === 'GET' && pathname === '/api/admin/bootstrap') {
       const counts = database.prepare(`SELECT (SELECT COUNT(*) FROM visitors) visitors, (SELECT COUNT(*) FROM messages WHERE status='new') unreadMessages, (SELECT COUNT(*) FROM content WHERE enabled=1 AND published=1) publishedSections`).get();
-      return json(response, 200, { session: { email: session.email }, counts, analytics: analytics(), content: database.prepare('SELECT * FROM content ORDER BY id').all(), events: database.prepare('SELECT * FROM events ORDER BY id DESC LIMIT 50').all(), messages: database.prepare('SELECT * FROM messages ORDER BY id DESC LIMIT 50').all(), visitors: database.prepare("SELECT * FROM visitors WHERE last_seen >= datetime('now', '-30 minutes') ORDER BY last_seen DESC").all() });
+      return json(response, 200, { session: { email: session.email, csrfToken: session.csrfToken }, counts, analytics: analytics(), content: database.prepare('SELECT * FROM content ORDER BY id').all(), events: database.prepare('SELECT * FROM events ORDER BY id DESC LIMIT 50').all(), messages: database.prepare('SELECT * FROM messages ORDER BY id DESC LIMIT 50').all(), visitors: database.prepare("SELECT * FROM visitors WHERE last_seen >= datetime('now', '-30 minutes') ORDER BY last_seen DESC").all() });
     }
     if (request.method === 'GET' && pathname === '/api/admin/events') return json(response, 200, database.prepare('SELECT * FROM events ORDER BY id DESC LIMIT 100').all());
     if (request.method === 'GET' && pathname === '/api/admin/stream') {

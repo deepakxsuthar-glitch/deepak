@@ -2,16 +2,18 @@
   'use strict';
 
   var sessionKey = 'deepak-visitor-session';
+  var apiBase = (window.DEEPAK_API_BASE || '').replace(/\/+$/, '');
+  var apiUrl = function (url) { return apiBase + url; };
   var sessionId = localStorage.getItem(sessionKey) || (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
   localStorage.setItem(sessionKey, sessionId);
 
-  fetch('/api/track', {
+  fetch(apiUrl('/api/track'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sessionId: sessionId, page: window.location.pathname })
   }).catch(function () {});
 
-  fetch('/api/content').then(function (response) {
+  fetch(apiUrl('/api/content')).then(function (response) {
     if (!response.ok) throw new Error('Unable to load published content');
     return response.json();
   }).then(function (sections) {
@@ -58,7 +60,7 @@
     button.disabled = true;
     button.value = 'Sending...';
     var data = Object.fromEntries(new FormData(form).entries());
-    fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+    fetch(apiUrl('/api/contact'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
       .then(function (response) { if (!response.ok) throw new Error('Unable to send'); return response.json(); })
       .then(function () { form.reset(); button.value = 'Message sent'; })
       .catch(function () { button.value = 'Try again'; })

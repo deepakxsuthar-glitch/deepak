@@ -14,7 +14,18 @@ npm start
 
 Then open `http://localhost:3000/admin`. The first server start creates `data/deepak.sqlite` and seeds the current portfolio sections. Do not commit the database or password hash.
 
-The server provides real local persistence, cookie sessions, CSRF protection for writes, public page-view tracking, contact-message storage, audit events, CMS editing, and an SSE activity stream. The public site must be served through the Node server for tracking, contact submissions, and CMS hydration to work.
+## Deploy the live admin
+
+The GitHub Pages site is static, so the admin API must run as a separate Node.js service. This repository includes a Render Blueprint in `render.yaml`; it configures the Node server and persistent SQLite storage. The Blueprint uses a paid web service and persistent disk, so check Render's current pricing before creating it.
+
+1. In Render, create a new **Blueprint** from this GitHub repository and deploy `render.yaml`.
+2. Generate a fresh password hash locally with `npm run hash-password -- "choose-a-new-strong-password"`. Enter that hash as the secret `ADMIN_PASSWORD_HASH` when Render prompts for it. Do not reuse a password posted in chat, and never commit the hash or raw password.
+3. After Render gives the service URL, set `window.DEEPAK_API_BASE` in `js/api-config.js` to that HTTPS URL (no trailing slash), then commit and push the change so GitHub Pages publishes it.
+4. Open `https://deepakxsuthar-glitch.github.io/deepak/admin/` and sign in with the configured `ADMIN_EMAIL` and the new password.
+
+The service allows API requests only from this GitHub Pages origin. The browser must allow cross-site cookies for login sessions; if they are blocked by privacy settings, a custom domain/reverse proxy on the same site is needed.
+
+The server provides persistent storage, cookie sessions, CSRF protection for writes, public page-view tracking, contact-message storage, audit events, CMS editing, and an SSE activity stream. For a static GitHub Pages frontend, set its API URL in `js/api-config.js` so tracking, contact submissions, and CMS hydration reach the hosted Node server.
 
 ## Admin scope and production notes
 
