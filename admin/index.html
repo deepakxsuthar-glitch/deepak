@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deepak / Control Room</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="stylesheet" href="/admin/analytics.css">
+  <style>
+    .content-item .content-fields{display:grid;gap:8px;min-width:0}
+    .content-item .content-flags{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .content-item .content-flags label{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font:11px 'DM Mono',monospace;text-transform:none}
+    .content-item .content-flags input[type="checkbox"]{width:auto;margin:0;accent-color:var(--mint)}
+    .content-item button{white-space:nowrap}
+  </style>
+</head>
+<body>
+  <main id="app" class="shell">
+    <section id="login-view" class="login-panel">
+      <p class="eyebrow">DEEPAK / DIGITAL IDENTITY</p>
+      <h1>Control room.</h1>
+      <p class="muted">Private administration for the live portfolio system.</p>
+      <form id="login-form">
+        <label>Email<input name="email" type="email" autocomplete="username" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit">Sign in</button>
+        <p id="login-error" class="error" role="alert"></p>
+      </form>
+    </section>
+    <section id="dashboard-view" hidden>
+      <header class="topbar">
+        <div><p class="eyebrow">DEEPAK / DIGITAL IDENTITY</p><h1>Control room</h1></div>
+        <div class="top-actions"><span id="connection" class="status"><i></i> Checking</span><a href="/" target="_blank" rel="noopener">Open live site</a><button id="logout" class="quiet">Log out</button></div>
+      </header>
+      <div class="layout">
+        <aside class="sidebar">
+          <p class="eyebrow">Workspace</p>
+          <nav><a class="active" href="#overview">Overview</a><a href="#activity">Live monitor</a><a href="#content">Content</a><a href="#messages">Messages <b id="message-badge">0</b></a><a href="#system">System health</a></nav>
+          <p class="sidebar-note">Local production foundation<br><span id="environment">Environment unavailable</span></p>
+        </aside>
+        <div class="content">
+          <section id="overview" class="hero-row"><div><p class="eyebrow">Overview / <span id="today"></span></p><h2>Make the signal useful.</h2><p class="muted">Persistent content, real visitor events, and an audit trail in one place.</p></div><div class="health-orb"><span id="health-label">Checking</span><strong id="health-status">...</strong></div></section>
+          <section class="metrics" aria-label="Live numbers"><article><span>Active visitors</span><strong id="active-visitors">0</strong><small>last 30 minutes</small></article><article><span>Unread messages</span><strong id="unread-messages">0</strong><small>stored in inbox</small></article><article><span>Published sections</span><strong id="published-sections">0</strong><small>CMS source of truth</small></article><article><span>Page views</span><strong id="page-views">0</strong><small>all tracked views</small></article></section>
+          <section id="analytics" class="panel analytics-panel"><div class="panel-head"><div><p class="eyebrow">Analytics / Local data</p><h3>Real traffic signals</h3></div><span id="analytics-source" class="muted">Loading</span></div><div class="analytics-grid"><div><h4>Top pages</h4><div id="top-pages" class="bar-list"></div></div><div><h4>Devices</h4><div id="devices" class="bar-list"></div><h4>Browsers</h4><div id="browsers" class="bar-list"></div></div></div><div><h4>Daily views / last 30 days</h4><div id="daily-views" class="daily-chart"></div></div></section>
+          <section class="grid-two">
+            <article id="activity" class="panel"><div class="panel-head"><div><p class="eyebrow">Realtime</p><h3>Live activity</h3></div><span id="realtime-status" class="live-pill"><i></i> Connecting</span></div><div id="activity-list" class="activity-list"></div></article>
+            <article id="system" class="panel"><div class="panel-head"><div><p class="eyebrow">System</p><h3>Health checks</h3></div></div><div id="health-list" class="health-list"></div></article>
+          </section>
+          <section id="content" class="panel"><div class="panel-head"><div><p class="eyebrow">CMS</p><h3>Website content</h3></div><span class="muted">Save, enable, and publish live sections</span></div><div id="content-list" class="content-list"></div></section>
+          <section id="messages" class="panel"><div class="panel-head"><div><p class="eyebrow">Inbox</p><h3>Contact messages</h3></div><span class="muted">New messages arrive live</span></div><div id="message-list" class="message-list"></div></section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

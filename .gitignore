@@ -1,0 +1,12 @@
+# Local dependencies and runtime data
+node_modules/
+data/*.sqlite
+data/*.sqlite-*
+.env
+.env.*
+!.env.example
+
+# Editor and build caches
+.sass-cache/
+.DS_Store
+npm-debug.log*
