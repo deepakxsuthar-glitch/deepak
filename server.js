@@ -256,7 +256,18 @@ async function route(request, response) {
   if (request.method === 'GET' && pathname === '/admin/') {
     const html = fs.readFileSync(path.join(ROOT, 'admin', 'index.html')); response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return response.end(html);
   }
+  if (request.method === 'GET' && pathname === '/404.html') {
+    const html = fs.readFileSync(path.join(ROOT, '404.html')); response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return response.end(html);
+  }
   if (request.method === 'GET' && publicFile(request, response, pathname)) return;
+  if (request.method === 'GET' && !pathname.startsWith('/api/')) {
+    const pagePath = path.join(ROOT, '404.html');
+    if (fs.existsSync(pagePath)) {
+      const html = fs.readFileSync(pagePath);
+      response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+      return response.end(html);
+    }
+  }
   json(response, 404, { error: 'Not found' });
 }
 

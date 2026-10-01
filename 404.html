@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+    <style>
+      :root {
+        --bg: #e6e6e6;
+        --navy: #0d1d3d;
+        --orange: #f79b2d;
+        --orange-deep: #e77d1d;
+        --box: #c9a180;
+        --box-dark: #9d714f;
+        --text: #1d1d1d;
+        --muted: #4a4a4a;
+        --gray: rgba(0, 0, 0, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .page {
+        width: min(1200px, 92vw);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 0 40px;
+      }
+
+      .art-wrap {
+        position: relative;
+        width: min(1100px, 90vw);
+        padding-top: 18px;
+      }
+
+      .big-404 {
+        font-weight: 900;
+        font-size: clamp(260px, 34vw, 620px);
+        line-height: 0.75;
+        letter-spacing: -0.08em;
+        color: rgba(0, 0, 0, 0.12);
+        text-align: center;
+        margin: 0 auto 6px;
+        user-select: none;
+      }
+
+      .scene {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        margin-top: -72px;
+      }
+
+      .wire {
+        position: absolute;
+        left: 16%;
+        right: 18%;
+        top: 56%;
+        height: 78px;
+        border: 9px solid var(--navy);
+        border-color: var(--navy) transparent transparent transparent;
+        border-radius: 50%/100% 100% 0 0;
+        transform: rotate(0deg);
+      }
+
+      .wire::before,
+      .wire::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: var(--navy);
+        border-radius: 50%;
+        top: -8px;
+      }
+
+      .wire::before { left: 4%; }
+      .wire::after { right: 4%; }
+
+      .bomb {
+        position: absolute;
+        width: 130px;
+        height: 82px;
+        background: linear-gradient(180deg, var(--orange) 0%, var(--orange) 68%, #ef8d22 100%);
+        border-radius: 16px 16px 14px 14px;
+        border: 5px solid var(--navy);
+        box-shadow: inset -10px 0 0 rgba(0,0,0,0.08);
+      }
+
+      .bomb::before {
+        content: "";
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 12px;
+        bottom: 12px;
+        border-radius: 10px;
+        border: 5px solid var(--navy);
+        background: transparent;
+      }
+
+      .bomb::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        width: 14px;
+        height: 14px;
+        background: var(--navy);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        top: -12px;
+      }
+
+      .bomb.one { left: 18%; top: 30%; }
+      .bomb.two { left: 40%; top: 33%; width: 118px; }
+      .bomb.three { left: 62%; top: 29%; width: 112px; }
+
+      .cord {
+        position: absolute;
+        width: 5px;
+        background: var(--navy);
+        border-radius: 999px;
+      }
+
+      .cord.c1 { left: 24%; top: 27%; height: 92px; }
+      .cord.c2 { left: 46%; top: 27%; height: 110px; }
+      .cord.c3 { left: 68%; top: 26%; height: 88px; }
+
+      .detonator {
+        position: absolute;
+        right: 12%;
+        bottom: 18px;
+        width: 110px;
+        height: 80px;
+        background: var(--box);
+        border: 5px solid var(--navy);
+        border-radius: 12px 12px 10px 10px;
+        box-shadow: inset 0 0 0 5px rgba(255,255,255,0.07);
+      }
+
+      .detonator::before {
+        content: "";
+        position: absolute;
+        left: 18px;
+        top: 12px;
+        width: 20px;
+        height: 34px;
+        background: var(--orange);
+        border: 5px solid var(--navy);
+        border-radius: 8px;
+      }
+
+      .detonator::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        width: 18px;
+        height: 16px;
+        border: 4px solid var(--navy);
+        border-radius: 50%;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        transform: rotate(30deg);
+      }
+
+      .trigger {
+        position: absolute;
+        right: 18%;
+        bottom: 32px;
+        width: 18px;
+        height: 66px;
+        background: var(--orange);
+        border: 5px solid var(--navy);
+        border-radius: 8px;
+      }
+
+      .trigger::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: -8px;
+        width: 12px;
+        height: 12px;
+        transform: translateX(-50%);
+        background: var(--orange);
+        border: 5px solid var(--navy);
+        border-radius: 50%;
+      }
+
+      .content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 220px;
+        padding: 18px 26px;
+        background: #1e1e1f;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 12px;
+        font-size: clamp(2rem, 2.6vw, 3.2rem);
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      }
+
+      .copy {
+        max-width: 700px;
+        text-align: left;
+        font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+        line-height: 1.6;
+        color: var(--muted);
+        margin: 0;
+      }
+
+      @media (max-width: 800px) {
+        .scene {
+          height: 220px;
+          margin-top: -40px;
+        }
+
+        .bomb {
+          width: 90px;
+          height: 60px;
+        }
+
+        .bomb.one { left: 12%; }
+        .bomb.two { left: 35%; }
+        .bomb.three { left: 62%; }
+
+        .cord.c1 { left: 18%; }
+        .cord.c2 { left: 41%; }
+        .cord.c3 { left: 64%; }
+
+        .content {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .copy {
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="art-wrap">
+        <div class="big-404">404</div>
+
+        <div class="scene" aria-hidden="true">
+          <div class="cord c1"></div>
+          <div class="cord c2"></div>
+          <div class="cord c3"></div>
+
+          <div class="bomb one"></div>
+          <div class="bomb two"></div>
+          <div class="bomb three"></div>
+
+          <div class="wire"></div>
+          <div class="trigger"></div>
+          <div class="detonator"></div>
+        </div>
+
+        <div class="content">
+          <a href="/" class="back-btn">Back</a>
+          <p class="copy">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
