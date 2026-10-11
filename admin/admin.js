@@ -15,6 +15,11 @@
     return data;
   };
   function showLogin(message = '') { $('#login-view').hidden = false; $('#dashboard-view').hidden = true; $('#login-error').textContent = message; }
+  function activateNavigation(link) {
+    document.querySelectorAll('.side-nav a').forEach((item) => item.classList.toggle('active', item === link));
+    const label = [...link.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE).map((node) => node.textContent).join('').trim();
+    $('#breadcrumb-current').textContent = label;
+  }
   function render() {
     const { counts, events, content, messages, visitors, analytics } = state.data;
     $('#login-view').hidden = true; $('#dashboard-view').hidden = false; $('#environment').textContent = state.data.health.environment.toUpperCase(); $('#today').textContent = new Date().toLocaleDateString([], { month: 'short', day: 'numeric' });
@@ -30,6 +35,8 @@
     $('#message-list').innerHTML = messages.length ? messages.map((item) => `<div class="message-item"><div><strong>${escapeHtml(item.subject)}</strong><small>${escapeHtml(item.name)} · ${escapeHtml(item.email)} · ${formatDate(item.created_at)}</small><p>${escapeHtml(item.message)}</p></div><select class="message-status" data-id="${item.id}"><option ${item.status === 'new' ? 'selected' : ''}>new</option><option ${item.status === 'read' ? 'selected' : ''}>read</option><option ${item.status === 'replied' ? 'selected' : ''}>replied</option><option ${item.status === 'archived' ? 'selected' : ''}>archived</option></select></div>`).join('') : '<p class="empty">No messages stored yet.</p>';
     $('#content-list').querySelectorAll('.save-content').forEach((button) => button.addEventListener('click', async () => { const row = button.closest('.content-item'); button.disabled = true; button.textContent = 'Saving'; try { await request(`/api/admin/content/${row.dataset.section}`, { method: 'PUT', body: JSON.stringify({ title: row.querySelector('.content-title').value, body: row.querySelector('.content-body').value, enabled: row.querySelector('.content-enabled').checked, published: row.querySelector('.content-published').checked }) }); button.textContent = 'Saved'; await load(); setTimeout(() => { if (button.isConnected) { button.disabled = false; button.textContent = 'Save'; } }, 1200); } catch (error) { button.disabled = false; button.textContent = error.message; } }));
     $('#message-list').querySelectorAll('.message-status').forEach((select) => select.addEventListener('change', async () => { select.disabled = true; try { await request(`/api/admin/messages/${select.dataset.id}`, { method: 'PATCH', body: JSON.stringify({ status: select.value }) }); await load(); } catch (error) { select.disabled = false; select.title = error.message; } }));
+    const currentLink = [...document.querySelectorAll('.side-nav a')].find((link) => link.hash === window.location.hash) || $('.side-nav a[href="#overview"]');
+    activateNavigation(currentLink);
   }
   async function load({ preserveDrafts = false } = {}) {
     const drafts = preserveDrafts ? [...document.querySelectorAll('.content-item')].map((row) => ({ section: row.dataset.section, title: row.querySelector('.content-title').value, body: row.querySelector('.content-body').value, enabled: row.querySelector('.content-enabled').checked, published: row.querySelector('.content-published').checked })) : [];
@@ -42,6 +49,7 @@
   }
   $('#login-form').addEventListener('submit', async (event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const button = event.currentTarget.querySelector('button'); button.disabled = true; button.textContent = 'Checking'; try { const result = await request('/api/admin/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(form)) }); state.token = result.token || ''; state.csrf = result.csrfToken; sessionStorage.setItem('deepak-admin-token', state.token); sessionStorage.setItem('deepak-admin-csrf', state.csrf); await load(); } catch (error) { showLogin(error.message); } finally { button.disabled = false; button.textContent = 'Sign in'; } });
   $('#logout').addEventListener('click', async () => { try { await request('/api/admin/logout', { method: 'POST' }); } finally { state.token = ''; state.csrf = ''; sessionStorage.removeItem('deepak-admin-token'); sessionStorage.removeItem('deepak-admin-csrf'); showLogin(); } });
+  document.querySelectorAll('.side-nav a[href^="#"]').forEach((link) => link.addEventListener('click', () => activateNavigation(link)));
   if (state.token) load().catch((error) => { state.token = ''; state.csrf = ''; sessionStorage.removeItem('deepak-admin-token'); sessionStorage.removeItem('deepak-admin-csrf'); showLogin(error.message); });
   setInterval(() => { if (state.token) load({ preserveDrafts: true }).catch(() => { state.realtime = false; if (state.data) render(); }); }, 15000);
 })();

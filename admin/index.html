@@ -3,54 +3,142 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0f172a">
-  <title>Deepak / Control Room</title>
+  <meta name="theme-color" content="#090d13">
+  <meta name="description" content="Private portfolio administration dashboard.">
+  <title>Deepak — Studio Admin</title>
   <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
   <link rel="apple-touch-icon" href="../images/favicon.svg">
   <link rel="stylesheet" href="admin.css">
-  <link rel="stylesheet" href="analytics.css">
-  <style>
-    .content-item .content-fields{display:grid;gap:8px;min-width:0}
-    .content-item .content-flags{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-    .content-item .content-flags label{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font:11px 'DM Mono',monospace;text-transform:none}
-    .content-item .content-flags input[type="checkbox"]{width:auto;margin:0;accent-color:var(--mint)}
-    .content-item button{white-space:nowrap}
-  </style>
 </head>
 <body>
-  <main id="app" class="shell">
-    <section id="login-view" class="login-panel">
-      <p class="eyebrow">DEEPAK / DIGITAL IDENTITY</p>
-      <h1>Control room.</h1>
-      <p class="muted">Private administration for the live portfolio system.</p>
-      <form id="login-form">
-        <label>Email<input name="email" type="email" autocomplete="username" required></label>
-        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
-        <button type="submit">Sign in</button>
-        <p id="login-error" class="error" role="alert"></p>
-      </form>
+  <main id="app" class="app-shell">
+    <section id="login-view" class="login-screen">
+      <div class="login-visual">
+        <a class="brand-lockup" href="../" aria-label="Back to Deepak's portfolio">
+          <span class="brand-mark">D<span>.</span></span>
+          <span>DEEPAK <small>STUDIO</small></span>
+        </a>
+        <div class="visual-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> PRIVATE WORKSPACE</p>
+          <h1>Your work,<br>in good hands.</h1>
+          <p>One calm space to manage the portfolio, follow the signal, and keep everything moving.</p>
+        </div>
+        <div class="visual-footer"><span>DESIGNED TO KEEP YOU IN FLOW</span><span>01 / 01</span></div>
+        <div class="login-orbit orbit-one"></div>
+        <div class="login-orbit orbit-two"></div>
+      </div>
+      <div class="login-main">
+        <a class="mobile-brand" href="../"><span class="brand-mark">D<span>.</span></span> DEEPAK STUDIO</a>
+        <div class="login-card">
+          <div class="login-card-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p class="eyebrow">WELCOME BACK</p>
+          <h2>Sign in to continue</h2>
+          <p class="login-intro">Use your admin credentials to open your workspace.</p>
+          <form id="login-form">
+            <label for="admin-email">Email address</label>
+            <input id="admin-email" name="email" type="email" placeholder="you@example.com" autocomplete="username" required>
+            <label for="admin-password">Password</label>
+            <input id="admin-password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="submit"><span>Sign in securely</span><span aria-hidden="true">↗</span></button>
+            <p id="login-error" class="error" role="alert"></p>
+          </form>
+          <p class="secure-note"><span aria-hidden="true">◈</span> Protected admin access</p>
+        </div>
+        <a class="back-link" href="../"><span aria-hidden="true">←</span> Back to portfolio</a>
+      </div>
     </section>
-    <section id="dashboard-view" hidden>
-      <header class="topbar">
-        <div><p class="eyebrow">DEEPAK / DIGITAL IDENTITY</p><h1>Control room</h1></div>
-        <div class="top-actions"><span id="connection" class="status"><i></i> Checking</span><a href="../" target="_blank" rel="noopener">Open live site</a><button id="logout" class="quiet">Log out</button></div>
-      </header>
-      <div class="layout">
-        <aside class="sidebar">
-          <p class="eyebrow">Workspace</p>
-          <nav><a class="active" href="#overview">Overview</a><a href="#activity">Live monitor</a><a href="#content">Content</a><a href="#messages">Messages <b id="message-badge">0</b></a><a href="#system">System health</a></nav>
-          <p class="sidebar-note">Local production foundation<br><span id="environment">Environment unavailable</span></p>
-        </aside>
+
+    <section id="dashboard-view" class="dashboard" hidden>
+      <aside class="sidebar">
+        <a class="brand-lockup" href="../" aria-label="Deepak Studio home">
+          <span class="brand-mark">D<span>.</span></span>
+          <span>DEEPAK <small>STUDIO</small></span>
+        </a>
+        <div class="workspace-chip"><span class="workspace-avatar">DS</span><span><strong>Personal workspace</strong><small>Portfolio management</small></span><span class="workspace-chevron">⌄</span></div>
+        <p class="nav-heading">WORKSPACE</p>
+        <nav class="side-nav" aria-label="Workspace navigation">
+          <a class="active" href="#overview"><span class="nav-icon">◫</span>Overview</a>
+          <a href="#analytics"><span class="nav-icon">⌁</span>Analytics</a>
+          <a href="#activity"><span class="nav-icon">◷</span>Activity</a>
+          <a href="#content"><span class="nav-icon">▤</span>Content</a>
+          <a href="#messages"><span class="nav-icon">✉</span>Messages<span id="message-badge" class="nav-badge">0</span></a>
+          <a href="#system"><span class="nav-icon">◉</span>System health</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-status"><span class="status-dot"></span><span><strong id="connection">Connecting</strong><small id="environment">Environment unavailable</small></span></div>
+          <a class="sidebar-home" href="../" target="_blank" rel="noopener"><span class="nav-icon">↗</span>View live portfolio</a>
+        </div>
+      </aside>
+
+      <div class="dashboard-main">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-slash">/</span><strong id="breadcrumb-current">Overview</strong></div>
+          <div class="top-actions">
+            <span class="top-date" id="today"></span>
+            <span id="realtime-status" class="live-pill"><i></i> Connecting</span>
+            <button id="logout" class="avatar-button" aria-label="Log out" title="Log out">DS</button>
+          </div>
+        </header>
+
         <div class="content">
-          <section id="overview" class="hero-row"><div><p class="eyebrow">Overview / <span id="today"></span></p><h2>Make the signal useful.</h2><p class="muted">Persistent content, real visitor events, and an audit trail in one place.</p></div><div class="health-orb"><span id="health-label">Checking</span><strong id="health-status">...</strong></div></section>
-          <section class="metrics" aria-label="Live numbers"><article><span>Active visitors</span><strong id="active-visitors">0</strong><small>last 30 minutes</small></article><article><span>Unread messages</span><strong id="unread-messages">0</strong><small>stored in inbox</small></article><article><span>Published sections</span><strong id="published-sections">0</strong><small>CMS source of truth</small></article><article><span>Page views</span><strong id="page-views">0</strong><small>all tracked views</small></article></section>
-          <section id="analytics" class="panel analytics-panel"><div class="panel-head"><div><p class="eyebrow">Analytics / Local data</p><h3>Real traffic signals</h3></div><span id="analytics-source" class="muted">Loading</span></div><div class="analytics-grid"><div><h4>Top pages</h4><div id="top-pages" class="bar-list"></div></div><div><h4>Devices</h4><div id="devices" class="bar-list"></div><h4>Browsers</h4><div id="browsers" class="bar-list"></div></div></div><div><h4>Daily views / last 30 days</h4><div id="daily-views" class="daily-chart"></div></div></section>
-          <section class="grid-two">
-            <article id="activity" class="panel"><div class="panel-head"><div><p class="eyebrow">Realtime</p><h3>Live activity</h3></div><span id="realtime-status" class="live-pill"><i></i> Connecting</span></div><div id="activity-list" class="activity-list"></div></article>
-            <article id="system" class="panel"><div class="panel-head"><div><p class="eyebrow">System</p><h3>Health checks</h3></div></div><div id="health-list" class="health-list"></div></article>
+          <section id="overview" class="welcome-row">
+            <div>
+              <p class="eyebrow">YOUR PORTFOLIO AT A GLANCE</p>
+              <h1>Good to see you, Deepak<span>.</span></h1>
+              <p class="welcome-subtitle">Here’s what’s happening with your digital space today.</p>
+            </div>
+            <div class="site-health"><span class="health-pulse"></span><span><small id="health-label">WEBSITE</small><strong id="health-status">Checking</strong></span><span class="health-arrow">↗</span></div>
           </section>
-          <section id="content" class="panel"><div class="panel-head"><div><p class="eyebrow">CMS</p><h3>Website content</h3></div><span class="muted">Save, enable, and publish live sections</span></div><div id="content-list" class="content-list"></div></section>
-          <section id="messages" class="panel"><div class="panel-head"><div><p class="eyebrow">Inbox</p><h3>Contact messages</h3></div><span class="muted">New messages arrive live</span></div><div id="message-list" class="message-list"></div></section>
+
+          <section class="metrics" aria-label="Portfolio overview metrics">
+            <article class="metric-card">
+              <span class="metric-icon mint-icon">⌁</span><span class="metric-label">ACTIVE VISITORS</span>
+              <strong id="active-visitors">0</strong><small>Last 30 minutes</small><span class="metric-decoration">01</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-icon violet-icon">✉</span><span class="metric-label">UNREAD MESSAGES</span>
+              <strong id="unread-messages">0</strong><small>Waiting in your inbox</small><span class="metric-decoration">02</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-icon blue-icon">▤</span><span class="metric-label">PUBLISHED SECTIONS</span>
+              <strong id="published-sections">0</strong><small>Live on your portfolio</small><span class="metric-decoration">03</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-icon amber-icon">◷</span><span class="metric-label">TOTAL PAGE VIEWS</span>
+              <strong id="page-views">0</strong><small>All tracked visits</small><span class="metric-decoration">04</span>
+            </article>
+          </section>
+
+          <section id="analytics" class="panel analytics-panel">
+            <div class="panel-head"><div><p class="eyebrow">THE BIG PICTURE</p><h2>Traffic overview</h2></div><span id="analytics-source" class="source-chip">Loading analytics</span></div>
+            <div class="analytics-grid">
+              <div class="analytics-column"><h3>Most visited pages</h3><div id="top-pages" class="bar-list"></div></div>
+              <div class="analytics-column analytics-breakdown"><h3>Devices</h3><div id="devices" class="bar-list"></div><h3 class="browser-heading">Browsers</h3><div id="browsers" class="bar-list"></div></div>
+            </div>
+            <div class="daily-wrap"><div class="chart-heading"><h3>Daily views</h3><span>LAST 30 DAYS</span></div><div id="daily-views" class="daily-chart"></div></div>
+          </section>
+
+          <section class="grid-two">
+            <article id="activity" class="panel activity-panel">
+              <div class="panel-head"><div><p class="eyebrow">HAPPENING NOW</p><h2>Recent activity</h2></div><span id="activity-live-tag" class="panel-tag">LIVE FEED</span></div>
+              <div id="activity-list" class="activity-list"></div>
+            </article>
+            <article id="system" class="panel system-panel">
+              <div class="panel-head"><div><p class="eyebrow">UNDER THE HOOD</p><h2>System health</h2></div><span class="system-icon">◉</span></div>
+              <div id="health-list" class="health-list"></div>
+            </article>
+          </section>
+
+          <section id="content" class="panel content-panel">
+            <div class="panel-head"><div><p class="eyebrow">YOUR STORY, YOUR WORDS</p><h2>Portfolio content</h2><p class="panel-description">Edit what visitors see. Save changes to update a section.</p></div><span class="panel-tag">CONTENT MANAGER</span></div>
+            <div id="content-list" class="content-list"></div>
+          </section>
+
+          <section id="messages" class="panel messages-panel">
+            <div class="panel-head"><div><p class="eyebrow">STAY IN THE LOOP</p><h2>Your inbox</h2><p class="panel-description">Messages sent through your portfolio contact form.</p></div><span class="panel-tag">CONTACT MESSAGES</span></div>
+            <div id="message-list" class="message-list"></div>
+          </section>
+          <footer class="dashboard-footer"><span>DEEPAK STUDIO <b>·</b> PRIVATE WORKSPACE</span><a href="../" target="_blank" rel="noopener">Open public portfolio ↗</a></footer>
         </div>
       </div>
     </section>
